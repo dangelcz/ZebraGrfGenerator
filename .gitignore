@@ -1,0 +1,9 @@
+﻿*.*
+!*.java
+!*.jar
+!*.xml
+!.gitignore
+!.classpath
+!.project
+
+!build/*
