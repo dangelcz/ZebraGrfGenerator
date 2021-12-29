@@ -29,6 +29,7 @@ import java.io.File;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeListener;
 
+import cz.dangelcz.print.grfgen.launch.ApplicationConfig;
 import cz.dangelcz.print.grfgen.libs.IoHelper;
 import cz.dangelcz.print.grfgen.logic.GrfGenerator;
 import cz.dangelcz.print.grfgen.logic.ImageProcessing;
@@ -94,7 +95,7 @@ public class GrfGeneratorWindow
 				{
 					public void run()
 					{
-						JFileChooser jf = new JFileChooser("./data");
+						JFileChooser jf = new JFileChooser(ApplicationConfig.DEFAULT_FILE_PATH);
 						jf.setDialogTitle("Select image");
 						jf.setFileFilter(new JFileChooserImageFileFilter());
 
@@ -180,7 +181,7 @@ public class GrfGeneratorWindow
 						String outputFileName = windowData.getInputFilePath();
 						outputFileName = IoHelper.getFileNameWithoutType(outputFileName) + ".grf";
 
-						JFileChooser jf = new JFileChooser("./data");
+						JFileChooser jf = new JFileChooser(ApplicationConfig.DEFAULT_FILE_PATH);
 						jf.setDialogTitle("Set grf file name");
 						jf.setSelectedFile(new File(outputFileName));
 
@@ -220,7 +221,7 @@ public class GrfGeneratorWindow
 						String outputFileName = windowData.getInputFilePath();
 						outputFileName = IoHelper.getFileNameWithoutType(outputFileName) + ".zpl";
 
-						JFileChooser jf = new JFileChooser("./data");
+						JFileChooser jf = new JFileChooser(ApplicationConfig.DEFAULT_FILE_PATH);
 						jf.setDialogTitle("Set grf file name");
 						jf.setSelectedFile(new File(outputFileName));
 

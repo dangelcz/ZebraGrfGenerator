@@ -21,7 +21,7 @@ public class ApplicationLauncher
 				GrfGeneratorWindow aw = new GrfGeneratorWindow();
 				
 				GrfGeneratorWindowData data = new GrfGeneratorWindowData();
-				data.setBlackness(50);
+				data.setBlackness(ApplicationConfig.DEFAULT_BLACKNESS);
 				aw.setModelInstance(data);
 				
 				aw.setVisible(true);
