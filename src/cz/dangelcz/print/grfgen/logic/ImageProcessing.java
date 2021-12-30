@@ -9,8 +9,7 @@ import java.awt.image.WritableRaster;
 
 public class ImageProcessing
 {
-
-	public static BufferedImage processImage(BufferedImage inputImage, int blackness)
+	public static BufferedImage convertToBlackMask(BufferedImage inputImage, int blackness)
 	{
 		final int BLACK = 0xFF000000;
 		final int WHITE = 0xFFFFFFFF;
