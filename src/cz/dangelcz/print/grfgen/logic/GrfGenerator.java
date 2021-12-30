@@ -10,8 +10,6 @@ import javax.imageio.ImageIO;
 
 /**
  * Originally taken from http://www.jcgonzalez.com/java-image-to-zpl-example
- * 
- * @author pavd
  */
 public class GrfGenerator
 {
@@ -35,6 +33,7 @@ public class GrfGenerator
 	 * @param args
 	 * @throws Exception
 	 */
+	/*
 	public static void main(String[] args) throws Exception
 	{
 		GrfGeneratorInputParameters parameters = GrfGeneratorInputParameters.parseArguments(args);
@@ -59,20 +58,7 @@ public class GrfGenerator
 		Files.write(Paths.get(outputGrfFileName), outputGrf.getBytes());
 		Files.write(Paths.get(outputZplFileName), outputZpl.getBytes());
 	}
-
-	// helper method for removing file name extension
-	private static String getBaseName(String fileName)
-	{
-		int index = fileName.lastIndexOf('.');
-		if (index == -1)
-		{
-			return fileName;
-		} else
-		{
-			return fileName.substring(0, index);
-		}
-	}
-	
+*/
 	private static Map<Integer, String> mapCode = new HashMap<Integer, String>();
 	{
 		mapCode.put(1, "G");
@@ -154,45 +140,56 @@ public class GrfGenerator
 
 		int height = originalImage.getHeight();
 		int width = originalImage.getWidth();
-		int rgb, red, green, blue, index = 0;
+		int rgb, red, green, blue, colorSum;
+
+		int binaryIndex = 0;
+		int rowIndex = 0;
+		boolean rowEnd;
+
+		char auxChar;
 		char auxBinaryChar[] = { '0', '0', '0', '0', '0', '0', '0', '0' };
 
 		widthBytes = width / 8;
 
 		if (width % 8 > 0)
 		{
-			widthBytes = (((int) (width / 8)) + 1);
-		} else
-		{
-			widthBytes = width / 8;
+			widthBytes++;
 		}
 
 		this.total = widthBytes * height;
-		for (int h = 0; h < height; h++)
+
+		int[] inputPixels = originalImage.getRGB(0, 0, width, height, null, 0, width);
+
+		for (int i = 0; i < inputPixels.length; i++)
 		{
-			for (int w = 0; w < width; w++)
+			rgb = inputPixels[i];
+			red = (rgb >> 16) & 0x000000FF;
+			green = (rgb >> 8) & 0x000000FF;
+			blue = (rgb) & 0x000000FF;
+
+			colorSum = red + green + blue;
+			auxChar = colorSum > blackLimit ? '0' : '1';
+
+			auxBinaryChar[binaryIndex] = auxChar;
+			
+
+			rowIndex = i % width;
+			binaryIndex++;
+			
+			rowEnd = rowIndex == (width - 1);
+			
+			if (binaryIndex == 8 || rowEnd)
 			{
-				rgb = originalImage.getRGB(w, h);
-				red = (rgb >> 16) & 0x000000FF;
-				green = (rgb >> 8) & 0x000000FF;
-				blue = (rgb) & 0x000000FF;
-				char auxChar = '1';
-				int totalColor = red + green + blue;
-				if (totalColor > blackLimit)
+				sb.append(fourByteBinary(new String(auxBinaryChar)));
+				auxBinaryChar = new char[] { '0', '0', '0', '0', '0', '0', '0', '0' };
+				binaryIndex = 0;
+				
+				if (rowEnd)
 				{
-					auxChar = '0';
-				}
-				auxBinaryChar[index] = auxChar;
-				index++;
-				if (index == 8 || w == (width - 1))
-				{
-					sb.append(fourByteBinary(new String(auxBinaryChar)));
-					auxBinaryChar = new char[] { '0', '0', '0', '0', '0', '0', '0', '0' };
-					index = 0;
+					sb.append("\n");
+					//rowIndex = 0;
 				}
 			}
-
-			sb.append("\n");
 		}
 
 		return sb.toString();
@@ -201,6 +198,7 @@ public class GrfGenerator
 	private String fourByteBinary(String binaryStr)
 	{
 		int decimal = Integer.parseInt(binaryStr, 2);
+
 		if (decimal > 15)
 		{
 			return Integer.toString(decimal, 16).toUpperCase();
@@ -227,6 +225,7 @@ public class GrfGenerator
 				firstChar = false;
 				continue;
 			}
+
 			if (code.charAt(i) == '\n')
 			{
 				if (counter >= maxlinea && aux == '0')
@@ -250,12 +249,8 @@ public class GrfGenerator
 				} else
 				{
 					sbLinea.append(mapCode.get(counter) + aux);
-					/*
-					 * if (mapCode.get(counter) == null)
-					 * {
-					 * }
-					 */
 				}
+
 				counter = 1;
 				firstChar = true;
 				if (sbLinea.toString().equals(previousLine))
@@ -265,10 +260,12 @@ public class GrfGenerator
 				{
 					sbCode.append(sbLinea.toString());
 				}
+
 				previousLine = sbLinea.toString();
 				sbLinea.setLength(0);
 				continue;
 			}
+
 			if (aux == code.charAt(i))
 			{
 				counter++;
@@ -294,6 +291,7 @@ public class GrfGenerator
 				aux = code.charAt(i);
 			}
 		}
+
 		return sbCode.toString();
 	}
 

@@ -9,11 +9,11 @@ public class JFileChooserImageFileFilter extends FileFilter
 
 	public boolean accept(File f)
 	{
-		if(f.isDirectory())
+		if (f.isDirectory())
 		{
 			return true;
 		}
-		
+
 		String fileType = f.getName();
 		int i = fileType.lastIndexOf(".");
 		if (i > 0)
