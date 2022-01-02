@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="create_run_jar" name="Create Runnable Jar for Project GrfGenerator">
+    <!--this file was created by Eclipse Runnable JAR Export Wizard-->
+    <!--ANT 1.7 is required                                        -->
+    <!--define folder properties-->
+    <property name="dir.build" value="."/>
+	<property name="dir.workspace" value="${dir.build}/.."/>
+    <property name="dir.jar" value="${dir.workspace}/target"/>
+    <property name="file.jar" value="${dir.jar}/GrfGenerator.jar"/>
+    <target name="create_run_jar">
+    	<delete file="${file.jar}" />
+        <jar destfile="${file.jar}" filesetmanifest="mergewithoutmain">
+            <manifest>
+                <attribute name="Main-Class" value="cz.dangelcz.print.grfgen.launch.ApplicationLauncher"/>
+                <attribute name="Class-Path" value="."/>
+            </manifest>
+            <fileset dir="${dir.workspace}/target/classes"/>
+            <zipfileset excludes="META-INF/*.SF" src="C:/Users/Daniel/.m2/repository/com/formdev/flatlaf/1.6.4/flatlaf-1.6.4.jar"/>
+        </jar>
+    </target>
+</project>
