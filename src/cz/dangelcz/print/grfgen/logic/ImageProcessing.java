@@ -19,7 +19,7 @@ public class ImageProcessing
 
 		int colorThreshold = (int) (255 * 3 * ((double) blackness) / 100);
 		int colorSum;
-		
+
 		int red, green, blue;
 		int inputRgb;
 		int outputRgb;
@@ -106,12 +106,12 @@ public class ImageProcessing
 			translationOffset = Math.signum(radian) * (width - height) / 2;
 		}
 
-		double cx = width / 2;
-		double cy = height / 2;
+		double cx = (double) width / 2d;
+		double cy = (double) height / 2d;
 
 		BufferedImage outputImage = new BufferedImage(width, height, inputImage.getType());
 		Graphics2D g = outputImage.createGraphics();
-
+		g.setColor(Color.WHITE);
 		g.translate(translationOffset, translationOffset);
 		g.rotate(radian, cx, cy);
 		g.drawRenderedImage(inputImage, null);
