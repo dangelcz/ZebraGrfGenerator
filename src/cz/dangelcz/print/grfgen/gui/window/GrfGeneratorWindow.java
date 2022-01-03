@@ -4,7 +4,9 @@ import javax.swing.JFrame;
 import javax.swing.SpringLayout;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
+import javax.swing.KeyStroke;
 import javax.swing.JCheckBox;
+import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JSpinner;
 import javax.swing.JSlider;
@@ -14,18 +16,23 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import javax.swing.JSplitPane;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.ActionEvent;
 import javax.swing.JSeparator;
 import java.awt.Cursor;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 
-import java.awt.Frame;
 import java.awt.Color;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.Arrays;
+
 import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeListener;
 
@@ -36,26 +43,40 @@ import cz.dangelcz.print.grfgen.logic.ImageProcessing;
 import cz.dangelcz.print.grfgen.logic.JFileChooserImageFileFilter;
 
 import javax.swing.event.ChangeEvent;
+import java.awt.GridBagLayout;
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
+import java.awt.event.InputMethodListener;
+import java.awt.event.InputMethodEvent;
 
 public class GrfGeneratorWindow
 {
 	private JFrame grfGeneratorFrame;
+
 	private JTextField filePathInputField;
 	private JSpinner blacknessSpinner;
 	private JSlider blacknessSlider;
 	private JCheckBox useCompressionCheckBox;
 	private JButton turnLeftButton;
 	private JButton turnRightButton;
+	private JButton turn180Button;
 	private JButton flipHorizontalyButton;
 	private JButton flipVerticallyButton;
+	private JButton resetButton;
+
 	private JButton btnSaveGrf;
 	private JButton btnSaveZpl;
+
 	private ImagePanel originalImagePanel;
 	private ImagePanel transformedImagePanel;
-	private JButton turn180Button;
 
 	private GrfGeneratorWindowData windowData;
-	private JButton resetButton;
+	private JSpinner newWidthSpinner;
+	private JLabel originalSizeLabel;
+	private JSpinner newHeightSpinner;
+	private JCheckBox aspectRatioCheckBox;
+	
+	private boolean resolutionsSpinnerLock = false;
 
 	public GrfGeneratorWindow()
 	{
@@ -68,14 +89,15 @@ public class GrfGeneratorWindow
 	private void initialize()
 	{
 		grfGeneratorFrame = new JFrame();
-		grfGeneratorFrame.setExtendedState(Frame.MAXIMIZED_BOTH);
 		grfGeneratorFrame.setTitle("GRF generator");
-		grfGeneratorFrame.setBounds(100, 100, 774, 616);
+		grfGeneratorFrame.setBounds(100, 100, 990, 742);
 		grfGeneratorFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		grfGeneratorFrame.getContentPane().setLayout(new BorderLayout(0, 0));
-
+		
+				
+				
 		JPanel controlPanel = new JPanel();
-		controlPanel.setPreferredSize(new Dimension(180, 0));
+		controlPanel.setPreferredSize(new Dimension(190, 0));
 		SpringLayout sl_controlPanel = new SpringLayout();
 		controlPanel.setLayout(sl_controlPanel);
 
@@ -108,6 +130,8 @@ public class GrfGeneratorWindow
 							windowData.loadSourceImage(file.getAbsolutePath());
 							updateOutputImage();
 							enableComponents();
+
+							updateElementsFromModelData();
 						}
 					}
 				});
@@ -185,7 +209,7 @@ public class GrfGeneratorWindow
 						jf.setDialogTitle("Set grf file name");
 						jf.setSelectedFile(new File(outputFileName));
 
-						if (jf.showOpenDialog(grfGeneratorFrame) == JFileChooser.APPROVE_OPTION)
+						if (jf.showSaveDialog(grfGeneratorFrame) == JFileChooser.APPROVE_OPTION)
 						{
 							File file = jf.getSelectedFile();
 
@@ -225,7 +249,7 @@ public class GrfGeneratorWindow
 						jf.setDialogTitle("Set grf file name");
 						jf.setSelectedFile(new File(outputFileName));
 
-						if (jf.showOpenDialog(grfGeneratorFrame) == JFileChooser.APPROVE_OPTION)
+						if (jf.showSaveDialog(grfGeneratorFrame) == JFileChooser.APPROVE_OPTION)
 						{
 							File file = jf.getSelectedFile();
 
@@ -250,7 +274,58 @@ public class GrfGeneratorWindow
 		sl_controlPanel.putConstraint(SpringLayout.EAST, lblRotate, -10, SpringLayout.EAST, controlPanel);
 		controlPanel.add(lblRotate);
 
+		JSeparator separator = new JSeparator();
+		sl_controlPanel.putConstraint(SpringLayout.NORTH, lblRotate, 10, SpringLayout.SOUTH, separator);
+		sl_controlPanel.putConstraint(SpringLayout.WEST, separator, 10, SpringLayout.WEST, controlPanel);
+		sl_controlPanel.putConstraint(SpringLayout.EAST, separator, -10, SpringLayout.EAST, controlPanel);
+		sl_controlPanel.putConstraint(SpringLayout.NORTH, separator, 6, SpringLayout.SOUTH, useCompressionCheckBox);
+		controlPanel.add(separator);
+
+		JSeparator separator_1 = new JSeparator();
+		sl_controlPanel.putConstraint(SpringLayout.WEST, separator_1, 10, SpringLayout.WEST, controlPanel);
+		sl_controlPanel.putConstraint(SpringLayout.EAST, separator_1, -10, SpringLayout.EAST, controlPanel);
+		controlPanel.add(separator_1);
+
+		JSeparator separator_2 = new JSeparator();
+		sl_controlPanel.putConstraint(SpringLayout.WEST, separator_2, 16, SpringLayout.WEST, controlPanel);
+		sl_controlPanel.putConstraint(SpringLayout.SOUTH, separator_2, -10, SpringLayout.NORTH, btnSaveGrf);
+		sl_controlPanel.putConstraint(SpringLayout.EAST, separator_2, -10, SpringLayout.EAST, controlPanel);
+		controlPanel.add(separator_2);
+
+		resetButton = new JButton("Reset transformation");
+		sl_controlPanel.putConstraint(SpringLayout.WEST, resetButton, 10, SpringLayout.WEST, controlPanel);
+		sl_controlPanel.putConstraint(SpringLayout.SOUTH, resetButton, -10, SpringLayout.SOUTH, separator_2);
+		sl_controlPanel.putConstraint(SpringLayout.EAST, resetButton, -10, SpringLayout.EAST, controlPanel);
+		resetButton.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent e)
+			{
+				windowData.resetTransformation();
+				updateOutputImage();
+			}
+		});
+		resetButton.setEnabled(false);
+		controlPanel.add(resetButton);
+
+		JPanel rotateButtonsPanel = new JPanel();
+		sl_controlPanel.putConstraint(SpringLayout.NORTH, separator_1, 10, SpringLayout.SOUTH, rotateButtonsPanel);
+		sl_controlPanel.putConstraint(SpringLayout.NORTH, rotateButtonsPanel, 6, SpringLayout.SOUTH, lblRotate);
+		sl_controlPanel.putConstraint(SpringLayout.WEST, rotateButtonsPanel, 10, SpringLayout.WEST, controlPanel);
+		sl_controlPanel.putConstraint(SpringLayout.EAST, rotateButtonsPanel, -10, SpringLayout.EAST, controlPanel);
+		controlPanel.add(rotateButtonsPanel);
+
+		GridBagLayout gbl_rotateButtonsPanel = new GridBagLayout();
+		gbl_rotateButtonsPanel.columnWidths = new int[] { 40 };
+		gbl_rotateButtonsPanel.rowWeights = new double[] { 0.0, 0.0 };
+		rotateButtonsPanel.setLayout(gbl_rotateButtonsPanel);
+
 		turnLeftButton = new JButton("90\u00B0 left");
+		GridBagConstraints gbc_turnLeftButton = new GridBagConstraints();
+		gbc_turnLeftButton.fill = GridBagConstraints.HORIZONTAL;
+		gbc_turnLeftButton.insets = new Insets(0, 0, 5, 5);
+		gbc_turnLeftButton.gridx = 0;
+		gbc_turnLeftButton.gridy = 0;
+		rotateButtonsPanel.add(turnLeftButton, gbc_turnLeftButton);
 		turnLeftButton.setEnabled(false);
 		sl_controlPanel.putConstraint(SpringLayout.NORTH, turnLeftButton, 10, SpringLayout.SOUTH, lblRotate);
 		turnLeftButton.addActionListener(new ActionListener()
@@ -262,11 +337,15 @@ public class GrfGeneratorWindow
 				updateOutputImage();
 			}
 		});
-		sl_controlPanel.putConstraint(SpringLayout.WEST, turnLeftButton, 10, SpringLayout.WEST, controlPanel);
-		sl_controlPanel.putConstraint(SpringLayout.EAST, turnLeftButton, -10, SpringLayout.EAST, controlPanel);
-		controlPanel.add(turnLeftButton);
 
 		turnRightButton = new JButton("90\u00B0 right");
+		GridBagConstraints gbc_turnRightButton = new GridBagConstraints();
+		gbc_turnRightButton.fill = GridBagConstraints.HORIZONTAL;
+		gbc_turnRightButton.insets = new Insets(0, 0, 5, 0);
+		gbc_turnRightButton.gridx = 1;
+		gbc_turnRightButton.gridy = 0;
+		rotateButtonsPanel.add(turnRightButton, gbc_turnRightButton);
+		sl_controlPanel.putConstraint(SpringLayout.NORTH, turnRightButton, 46, SpringLayout.SOUTH, lblRotate);
 		turnRightButton.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent e)
@@ -277,12 +356,16 @@ public class GrfGeneratorWindow
 			}
 		});
 		turnRightButton.setEnabled(false);
-		sl_controlPanel.putConstraint(SpringLayout.NORTH, turnRightButton, 10, SpringLayout.SOUTH, turnLeftButton);
-		sl_controlPanel.putConstraint(SpringLayout.WEST, turnRightButton, 10, SpringLayout.WEST, controlPanel);
-		sl_controlPanel.putConstraint(SpringLayout.EAST, turnRightButton, -10, SpringLayout.EAST, controlPanel);
-		controlPanel.add(turnRightButton);
 
 		turn180Button = new JButton("180\u00B0");
+		GridBagConstraints gbc_turn180Button = new GridBagConstraints();
+		gbc_turn180Button.fill = GridBagConstraints.HORIZONTAL;
+		gbc_turn180Button.gridwidth = 2;
+		gbc_turn180Button.insets = new Insets(0, 0, 5, 0);
+		gbc_turn180Button.gridx = 0;
+		gbc_turn180Button.gridy = 1;
+		rotateButtonsPanel.add(turn180Button, gbc_turn180Button);
+		sl_controlPanel.putConstraint(SpringLayout.NORTH, turn180Button, 82, SpringLayout.SOUTH, lblRotate);
 		turn180Button.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent e)
@@ -293,13 +376,15 @@ public class GrfGeneratorWindow
 			}
 		});
 		turn180Button.setEnabled(false);
-		sl_controlPanel.putConstraint(SpringLayout.NORTH, turn180Button, 10, SpringLayout.SOUTH, turnRightButton);
-		sl_controlPanel.putConstraint(SpringLayout.WEST, turn180Button, 10, SpringLayout.WEST, controlPanel);
-		sl_controlPanel.putConstraint(SpringLayout.EAST, turn180Button, -10, SpringLayout.EAST, controlPanel);
-		sl_controlPanel.putConstraint(SpringLayout.WEST, turnRightButton, 0, SpringLayout.WEST, turn180Button);
-		controlPanel.add(turn180Button);
 
-		flipHorizontalyButton = new JButton("Flip horizontaly");
+		flipHorizontalyButton = new JButton("Flip horz.");
+		GridBagConstraints gbc_flipHorizontalyButton = new GridBagConstraints();
+		gbc_flipHorizontalyButton.fill = GridBagConstraints.HORIZONTAL;
+		gbc_flipHorizontalyButton.insets = new Insets(0, 0, 0, 5);
+		gbc_flipHorizontalyButton.gridx = 0;
+		gbc_flipHorizontalyButton.gridy = 2;
+		rotateButtonsPanel.add(flipHorizontalyButton, gbc_flipHorizontalyButton);
+		sl_controlPanel.putConstraint(SpringLayout.NORTH, flipHorizontalyButton, 118, SpringLayout.SOUTH, lblRotate);
 		flipHorizontalyButton.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent e)
@@ -310,12 +395,14 @@ public class GrfGeneratorWindow
 			}
 		});
 		flipHorizontalyButton.setEnabled(false);
-		sl_controlPanel.putConstraint(SpringLayout.NORTH, flipHorizontalyButton, 10, SpringLayout.SOUTH, turn180Button);
-		sl_controlPanel.putConstraint(SpringLayout.WEST, flipHorizontalyButton, 10, SpringLayout.WEST, controlPanel);
-		sl_controlPanel.putConstraint(SpringLayout.EAST, flipHorizontalyButton, -10, SpringLayout.EAST, controlPanel);
-		controlPanel.add(flipHorizontalyButton);
 
-		flipVerticallyButton = new JButton("Flip verticaly");
+		flipVerticallyButton = new JButton("Flip vert.");
+		GridBagConstraints gbc_flipVerticallyButton = new GridBagConstraints();
+		gbc_flipVerticallyButton.fill = GridBagConstraints.HORIZONTAL;
+		gbc_flipVerticallyButton.gridx = 1;
+		gbc_flipVerticallyButton.gridy = 2;
+		rotateButtonsPanel.add(flipVerticallyButton, gbc_flipVerticallyButton);
+		sl_controlPanel.putConstraint(SpringLayout.NORTH, flipVerticallyButton, 154, SpringLayout.SOUTH, lblRotate);
 		flipVerticallyButton.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent e)
@@ -326,40 +413,142 @@ public class GrfGeneratorWindow
 			}
 		});
 		flipVerticallyButton.setEnabled(false);
-		sl_controlPanel.putConstraint(SpringLayout.NORTH, flipVerticallyButton, 10, SpringLayout.SOUTH, flipHorizontalyButton);
-		sl_controlPanel.putConstraint(SpringLayout.WEST, flipVerticallyButton, 10, SpringLayout.WEST, controlPanel);
-		sl_controlPanel.putConstraint(SpringLayout.EAST, flipVerticallyButton, -10, SpringLayout.EAST, controlPanel);
-		controlPanel.add(flipVerticallyButton);
 
-		JSeparator separator = new JSeparator();
-		sl_controlPanel.putConstraint(SpringLayout.NORTH, lblRotate, 10, SpringLayout.SOUTH, separator);
-		sl_controlPanel.putConstraint(SpringLayout.WEST, separator, 10, SpringLayout.WEST, controlPanel);
-		sl_controlPanel.putConstraint(SpringLayout.EAST, separator, -10, SpringLayout.EAST, controlPanel);
-		sl_controlPanel.putConstraint(SpringLayout.NORTH, separator, 6, SpringLayout.SOUTH, useCompressionCheckBox);
-		controlPanel.add(separator);
+		JLabel lblNewLabel_2 = new JLabel("Resize");
+		sl_controlPanel.putConstraint(SpringLayout.NORTH, lblNewLabel_2, 6, SpringLayout.SOUTH, separator_1);
+		sl_controlPanel.putConstraint(SpringLayout.WEST, lblNewLabel_2, 10, SpringLayout.WEST, controlPanel);
+		sl_controlPanel.putConstraint(SpringLayout.EAST, lblNewLabel_2, -10, SpringLayout.EAST, controlPanel);
+		controlPanel.add(lblNewLabel_2);
 
-		JSeparator separator_1 = new JSeparator();
-		sl_controlPanel.putConstraint(SpringLayout.WEST, separator_1, 16, SpringLayout.WEST, controlPanel);
-		sl_controlPanel.putConstraint(SpringLayout.SOUTH, separator_1, -10, SpringLayout.NORTH, btnSaveGrf);
-		sl_controlPanel.putConstraint(SpringLayout.EAST, separator_1, -10, SpringLayout.EAST, controlPanel);
-		controlPanel.add(separator_1);
+		JPanel resizePanel = new JPanel();
+		sl_controlPanel.putConstraint(SpringLayout.NORTH, resizePanel, 6, SpringLayout.SOUTH, lblNewLabel_2);
+		sl_controlPanel.putConstraint(SpringLayout.WEST, resizePanel, 10, SpringLayout.WEST, controlPanel);
+		sl_controlPanel.putConstraint(SpringLayout.EAST, resizePanel, 180, SpringLayout.WEST, controlPanel);
+		controlPanel.add(resizePanel);
+		GridBagLayout gbl_resizePanel = new GridBagLayout();
+		gbl_resizePanel.columnWidths = new int[] { 0, 0, 0 };
+		gbl_resizePanel.rowHeights = new int[] { 0, 0, 0, 0, 0 };
+		gbl_resizePanel.columnWeights = new double[] { 0.0, 1.0, Double.MIN_VALUE };
+		gbl_resizePanel.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE };
+		resizePanel.setLayout(gbl_resizePanel);
 
-		resetButton = new JButton("Reset");
-		sl_controlPanel.putConstraint(SpringLayout.WEST, resetButton, 10, SpringLayout.WEST, controlPanel);
-		sl_controlPanel.putConstraint(SpringLayout.EAST, resetButton, -10, SpringLayout.EAST, controlPanel);
-		resetButton.addActionListener(new ActionListener()
+		originalSizeLabel = new JLabel("Original size");
+		GridBagConstraints gbc_originalSizeLabel = new GridBagConstraints();
+		gbc_originalSizeLabel.anchor = GridBagConstraints.WEST;
+		gbc_originalSizeLabel.gridwidth = 2;
+		gbc_originalSizeLabel.insets = new Insets(0, 0, 5, 5);
+		gbc_originalSizeLabel.gridx = 0;
+		gbc_originalSizeLabel.gridy = 0;
+		resizePanel.add(originalSizeLabel, gbc_originalSizeLabel);
+
+		JLabel lblNewLabel_3 = new JLabel("Width");
+		GridBagConstraints gbc_lblNewLabel_3 = new GridBagConstraints();
+		gbc_lblNewLabel_3.insets = new Insets(0, 0, 5, 5);
+		gbc_lblNewLabel_3.anchor = GridBagConstraints.WEST;
+		gbc_lblNewLabel_3.gridx = 0;
+		gbc_lblNewLabel_3.gridy = 1;
+		resizePanel.add(lblNewLabel_3, gbc_lblNewLabel_3);
+
+		newWidthSpinner = new JSpinner();
+		newWidthSpinner.addChangeListener(new ChangeListener()
 		{
-			public void actionPerformed(ActionEvent e)
+			public void stateChanged(ChangeEvent e)
 			{
-				windowData.resetTransformation();
-				updateOutputImage();
+				if (resolutionsSpinnerLock)
+				{
+					return;
+				}
+
+				resolutionsSpinnerLock = true;
+
+				int newWidth = (int) newWidthSpinner.getValue();
+				windowData.setNewWidth(newWidth);
+
+				if (windowData.keepAspectRatio())
+				{
+					int newHeight = (int) (newWidth / windowData.getAspectRatio());
+					windowData.setNewHeight(newHeight);
+					newHeightSpinner.setValue(newHeight);
+				}
+
+				applySizeChanges();
+
+				resolutionsSpinnerLock = false;
 			}
 		});
-		sl_controlPanel.putConstraint(SpringLayout.NORTH, resetButton, 6, SpringLayout.SOUTH, flipVerticallyButton);
-		resetButton.setEnabled(false);
-		controlPanel.add(resetButton);
+
+		newWidthSpinner.setEnabled(false);
+		GridBagConstraints gbc_newWidthSpinner = new GridBagConstraints();
+		gbc_newWidthSpinner.insets = new Insets(0, 0, 5, 0);
+		gbc_newWidthSpinner.fill = GridBagConstraints.HORIZONTAL;
+		gbc_newWidthSpinner.gridx = 1;
+		gbc_newWidthSpinner.gridy = 1;
+		resizePanel.add(newWidthSpinner, gbc_newWidthSpinner);
+
+		JLabel lblNewLabel_4 = new JLabel("Height");
+		GridBagConstraints gbc_lblNewLabel_4 = new GridBagConstraints();
+		gbc_lblNewLabel_4.anchor = GridBagConstraints.WEST;
+		gbc_lblNewLabel_4.insets = new Insets(0, 0, 5, 5);
+		gbc_lblNewLabel_4.gridx = 0;
+		gbc_lblNewLabel_4.gridy = 2;
+		resizePanel.add(lblNewLabel_4, gbc_lblNewLabel_4);
+
+		newHeightSpinner = new JSpinner();
+
+		newHeightSpinner.addChangeListener(new ChangeListener()
+		{
+			public void stateChanged(ChangeEvent e)
+			{
+				if (resolutionsSpinnerLock)
+				{
+					return;
+				}
+
+				resolutionsSpinnerLock = true;
+
+				int newHeight = (int) newHeightSpinner.getValue();
+				windowData.setNewHeight(newHeight);
+
+				if (windowData.keepAspectRatio())
+				{
+					int newWidth = (int) (newHeight * windowData.getAspectRatio());
+					windowData.setNewWidth(newWidth);
+					newWidthSpinner.setValue(newWidth);
+				}
+
+				applySizeChanges();
+				resolutionsSpinnerLock = false;
+			}
+		});
+
+		newHeightSpinner.setEnabled(false);
+		GridBagConstraints gbc_newHeightSpinner = new GridBagConstraints();
+		gbc_newHeightSpinner.insets = new Insets(0, 0, 5, 0);
+		gbc_newHeightSpinner.fill = GridBagConstraints.HORIZONTAL;
+		gbc_newHeightSpinner.gridx = 1;
+		gbc_newHeightSpinner.gridy = 2;
+		resizePanel.add(newHeightSpinner, gbc_newHeightSpinner);
+
+		aspectRatioCheckBox = new JCheckBox("Keep aspect ratio");
+		aspectRatioCheckBox.addActionListener(new ActionListener()
+		{
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				windowData.setKeepAspectRatio(aspectRatioCheckBox.isSelected());
+			}
+		});
+
+		aspectRatioCheckBox.setEnabled(false);
+		GridBagConstraints gbc_aspectRatioCheckBox = new GridBagConstraints();
+		gbc_aspectRatioCheckBox.anchor = GridBagConstraints.EAST;
+		gbc_aspectRatioCheckBox.gridwidth = 2;
+		gbc_aspectRatioCheckBox.gridx = 0;
+		gbc_aspectRatioCheckBox.gridy = 3;
+		resizePanel.add(aspectRatioCheckBox, gbc_aspectRatioCheckBox);
 
 		JSplitPane splitPane = new JSplitPane();
+		splitPane.setMinimumSize(new Dimension(250, 30));
 		splitPane.setDividerSize(5);
 		grfGeneratorFrame.getContentPane().add(splitPane, BorderLayout.CENTER);
 
@@ -397,6 +586,9 @@ public class GrfGeneratorWindow
 		btnSaveGrf.setEnabled(true);
 		btnSaveZpl.setEnabled(true);
 		resetButton.setEnabled(true);
+		newWidthSpinner.setEnabled(true);
+		newHeightSpinner.setEnabled(true);
+		aspectRatioCheckBox.setEnabled(true);
 	}
 
 	public void setBlackness(int value)
@@ -439,5 +631,34 @@ public class GrfGeneratorWindow
 
 		blacknessSlider.setValue(this.windowData.getBlackness());
 		blacknessSpinner.setValue(this.windowData.getBlackness());
+	}
+
+	public void updateOriginalSizeLabel()
+	{
+		int width = windowData.getSourceImage().getWidth();
+		int height = windowData.getSourceImage().getHeight();
+		originalSizeLabel.setText("Original size " + width + " x " + height);
+	}
+
+	public void updateElementsFromModelData()
+	{
+		updateOriginalSizeLabel();
+		aspectRatioCheckBox.setSelected(windowData.keepAspectRatio());
+		newWidthSpinner.setValue(windowData.getNewWidth());
+		newHeightSpinner.setValue(windowData.getNewHeight());
+	}
+
+	public void applySizeChanges()
+	{
+		int newWidth = windowData.getNewWidth();
+		int newHeight = windowData.getNewHeight();
+
+		if (windowData.getTransformedImage() != null && newWidth > 0 && newHeight > 0)
+		{
+			BufferedImage transformedImage = ImageProcessing.resizeImage(windowData.getSourceImage(), newWidth, newHeight);
+			windowData.setTransformedImage(transformedImage);
+
+			updateOutputImage();
+		}
 	}
 }

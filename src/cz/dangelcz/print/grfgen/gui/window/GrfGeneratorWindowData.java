@@ -17,12 +17,27 @@ public class GrfGeneratorWindowData
 	private boolean compress;
 	private int blackness;
 
+	private int newWidth;
+	private int newHeight;
+
+	//width/height
+	private double aspectRatio;
+
+	private boolean keepAspectRatio;
+
 	public void loadSourceImage(String inputImagePath)
 	{
 		this.inputFilePath = inputImagePath;
 		sourceImage = IoHelper.loadImage(inputImagePath);
 		sourceImage = ImageProcessing.transparencyToWhite(sourceImage);
-		resetTransformation();		
+		newWidth = sourceImage.getWidth();
+		newHeight = sourceImage.getHeight();
+
+		aspectRatio = ((double) newWidth / (double) newHeight);
+
+		keepAspectRatio = true;
+		
+		resetTransformation();
 	}
 
 	public BufferedImage getSourceImage()
@@ -108,5 +123,40 @@ public class GrfGeneratorWindowData
 	public void resetTransformation()
 	{
 		transformedImage = ImageProcessing.cloneImage(sourceImage);
+	}
+
+	public int getNewWidth()
+	{
+		return newWidth;
+	}
+
+	public void setNewWidth(int newWidth)
+	{
+		this.newWidth = newWidth;
+	}
+
+	public int getNewHeight()
+	{
+		return newHeight;
+	}
+
+	public void setNewHeight(int newHeight)
+	{
+		this.newHeight = newHeight;
+	}
+
+	public boolean keepAspectRatio()
+	{
+		return keepAspectRatio;
+	}
+
+	public void setKeepAspectRatio(boolean keepAspectRatio)
+	{
+		this.keepAspectRatio = keepAspectRatio;
+	}
+
+	public double getAspectRatio()
+	{
+		return aspectRatio;
 	}
 }
