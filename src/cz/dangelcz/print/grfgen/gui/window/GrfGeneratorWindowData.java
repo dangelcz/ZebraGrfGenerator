@@ -5,10 +5,19 @@ import java.awt.image.BufferedImage;
 import cz.dangelcz.print.grfgen.libs.IoHelper;
 import cz.dangelcz.print.grfgen.logic.ImageProcessing;
 
+/*
+ * Tranformation workflow
+ * =======================
+ * 
+ * Source image -> rotated image -> scaled image -> output image
+ */
 public class GrfGeneratorWindowData
 {
 	private BufferedImage sourceImage;
-	private BufferedImage transformedImage;
+
+	private BufferedImage rotatedImage;
+	private BufferedImage scaledImage;
+
 	private BufferedImage outputImage;
 	private String outputCode;
 
@@ -20,7 +29,7 @@ public class GrfGeneratorWindowData
 	private int newWidth;
 	private int newHeight;
 
-	//width/height
+	// width / height
 	private double aspectRatio;
 
 	private boolean keepAspectRatio;
@@ -30,14 +39,9 @@ public class GrfGeneratorWindowData
 		this.inputFilePath = inputImagePath;
 		sourceImage = IoHelper.loadImage(inputImagePath);
 		sourceImage = ImageProcessing.transparencyToWhite(sourceImage);
-		newWidth = sourceImage.getWidth();
-		newHeight = sourceImage.getHeight();
-
-		aspectRatio = ((double) newWidth / (double) newHeight);
-
 		keepAspectRatio = true;
-		
-		resetTransformation();
+
+		updateFromSourceImage();
 	}
 
 	public BufferedImage getSourceImage()
@@ -48,16 +52,7 @@ public class GrfGeneratorWindowData
 	public void setSourceImage(BufferedImage sourceImage)
 	{
 		this.sourceImage = sourceImage;
-	}
-
-	public BufferedImage getTransformedImage()
-	{
-		return transformedImage;
-	}
-
-	public void setTransformedImage(BufferedImage transformedImage)
-	{
-		this.transformedImage = transformedImage;
+		updateFromSourceImage();
 	}
 
 	public BufferedImage getOutputImage()
@@ -122,7 +117,18 @@ public class GrfGeneratorWindowData
 
 	public void resetTransformation()
 	{
-		transformedImage = ImageProcessing.cloneImage(sourceImage);
+		loadSourceImage(this.inputFilePath);
+	}
+
+	public void updateFromSourceImage()
+	{
+		newWidth = sourceImage.getWidth();
+		newHeight = sourceImage.getHeight();
+
+		aspectRatio = ((double) newWidth / (double) newHeight);
+
+		rotatedImage = ImageProcessing.cloneImage(sourceImage);
+		scaledImage = ImageProcessing.cloneImage(sourceImage);
 	}
 
 	public int getNewWidth()
@@ -158,5 +164,44 @@ public class GrfGeneratorWindowData
 	public double getAspectRatio()
 	{
 		return aspectRatio;
+	}
+
+	public BufferedImage getScaledImage()
+	{
+		return scaledImage;
+	}
+
+	public void setRotatedImageWithScaleSwitch(BufferedImage rotated)
+	{
+		// switch dimensions
+		newWidth = scaledImage.getHeight();
+		newHeight = scaledImage.getWidth();
+		aspectRatio = ((double) newWidth / (double) newHeight);
+
+		setRotatedImage(rotated);
+	}
+
+	public void setRotatedImage(BufferedImage rotated)
+	{
+		this.rotatedImage = rotated;
+		updateScaledImage();
+	}
+
+	public void updateScaledImage()
+	{
+		BufferedImage newScaledImage = ImageProcessing.resizeImage(rotatedImage, newWidth, newHeight);
+		setScaledImage(newScaledImage);
+	}
+
+	public void setScaledImage(BufferedImage scaled)
+	{
+		this.scaledImage = scaled;
+		newWidth = scaledImage.getWidth();
+		newHeight = scaledImage.getHeight();
+	}
+
+	public BufferedImage getRotatedImage()
+	{
+		return this.rotatedImage;
 	}
 }
