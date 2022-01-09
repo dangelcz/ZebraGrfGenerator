@@ -77,7 +77,7 @@ public class GrfGeneratorWindow
 	private JLabel originalSizeLabel;
 	private JSpinner newHeightSpinner;
 	private JCheckBox aspectRatioCheckBox;
-	
+
 	private boolean resolutionsSpinnerLock = false;
 
 	// 'model' item
@@ -98,9 +98,25 @@ public class GrfGeneratorWindow
 		grfGeneratorFrame.setBounds(100, 100, 990, 742);
 		grfGeneratorFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		grfGeneratorFrame.getContentPane().setLayout(new BorderLayout(0, 0));
-		
-				
-				
+
+		grfGeneratorFrame.getRootPane().registerKeyboardAction(new ActionListener()
+		{
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				openInputImage();
+			}
+		}, KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_MASK), JComponent.WHEN_IN_FOCUSED_WINDOW);
+
+		grfGeneratorFrame.getRootPane().registerKeyboardAction(new ActionListener()
+		{
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				saveOutputImage();
+			}
+		}, KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_MASK), JComponent.WHEN_IN_FOCUSED_WINDOW);
+
 		JPanel controlPanel = new JPanel();
 		controlPanel.setPreferredSize(new Dimension(190, 0));
 		SpringLayout sl_controlPanel = new SpringLayout();
@@ -113,33 +129,13 @@ public class GrfGeneratorWindow
 		controlPanel.add(lblInputFile);
 
 		filePathInputField = new JTextField();
+		filePathInputField.setToolTipText("Ctrl+O");
 		filePathInputField.addMouseListener(new MouseAdapter()
 		{
 			@Override
 			public void mousePressed(MouseEvent e)
 			{
-				SwingUtilities.invokeLater(new Runnable()
-				{
-					public void run()
-					{
-						JFileChooser jf = new JFileChooser(ApplicationConfig.DEFAULT_FILE_PATH);
-						jf.setDialogTitle("Select image");
-						jf.setFileFilter(new JFileChooserImageFileFilter());
-
-						if (jf.showOpenDialog(grfGeneratorFrame) == JFileChooser.APPROVE_OPTION)
-						{
-							File file = jf.getSelectedFile();
-							filePathInputField.setText(file.getName());
-							filePathInputField.setToolTipText(file.getAbsolutePath());
-
-							windowData.loadSourceImage(file.getAbsolutePath());
-							updateOutputImage();
-							enableComponents();
-
-							updateElementsFromModelData();
-						}
-					}
-				});
+				openInputImage();
 			}
 		});
 
@@ -196,6 +192,7 @@ public class GrfGeneratorWindow
 		controlPanel.add(useCompressionCheckBox);
 
 		btnSaveGrf = new JButton("Save GRF");
+		btnSaveGrf.setToolTipText("Ctrl+S");
 		btnSaveGrf.setEnabled(false);
 		sl_controlPanel.putConstraint(SpringLayout.WEST, btnSaveGrf, 10, SpringLayout.WEST, controlPanel);
 		sl_controlPanel.putConstraint(SpringLayout.EAST, btnSaveGrf, -10, SpringLayout.EAST, controlPanel);
@@ -203,31 +200,7 @@ public class GrfGeneratorWindow
 		{
 			public void actionPerformed(ActionEvent e)
 			{
-				SwingUtilities.invokeLater(new Runnable()
-				{
-					public void run()
-					{
-						String outputFileName = windowData.getInputFilePath();
-						outputFileName = IoHelper.getFileNameWithoutType(outputFileName) + ".grf";
-
-						JFileChooser jf = new JFileChooser(ApplicationConfig.DEFAULT_FILE_PATH);
-						jf.setDialogTitle("Set grf file name");
-						jf.setSelectedFile(new File(outputFileName));
-
-						if (jf.showSaveDialog(grfGeneratorFrame) == JFileChooser.APPROVE_OPTION)
-						{
-							File file = jf.getSelectedFile();
-
-							GrfGenerator grf = new GrfGenerator();
-							grf.setCompressHex(windowData.isCompress());
-							grf.setBlacknessLimitPercentage(windowData.getBlackness());
-							grf.loadImage(windowData.getOutputImage());
-
-							String grfData = grf.getGrf(file.getName());
-							IoHelper.saveTextFile(file, grfData, true);
-						}
-					}
-				});
+				saveOutputImage();
 			}
 		});
 
@@ -623,7 +596,7 @@ public class GrfGeneratorWindow
 
 		setNewWidth(windowData.getScaledImage().getWidth());
 		setNewHeight(windowData.getScaledImage().getHeight());
-		
+
 		repaintImages();
 	}
 
@@ -667,18 +640,78 @@ public class GrfGeneratorWindow
 			updateOutputImage();
 		}
 	}
-	
+
 	public void setNewWidth(int newWidth)
 	{
 		this.resolutionsSpinnerLock = true;
 		this.newWidthSpinner.setValue(newWidth);
 		this.resolutionsSpinnerLock = false;
 	}
-	
+
 	public void setNewHeight(int newHeight)
 	{
 		this.resolutionsSpinnerLock = true;
 		this.newHeightSpinner.setValue(newHeight);
 		this.resolutionsSpinnerLock = false;
+	}
+
+	private void openInputImage()
+	{
+		SwingUtilities.invokeLater(new Runnable()
+		{
+			public void run()
+			{
+				JFileChooser jf = new JFileChooser(ApplicationConfig.DEFAULT_FILE_PATH);
+				jf.setDialogTitle("Select image");
+				jf.setFileFilter(new JFileChooserImageFileFilter());
+
+				if (jf.showOpenDialog(grfGeneratorFrame) == JFileChooser.APPROVE_OPTION)
+				{
+					File file = jf.getSelectedFile();
+					filePathInputField.setText(file.getName());
+					filePathInputField.setToolTipText(file.getAbsolutePath());
+
+					windowData.loadSourceImage(file.getAbsolutePath());
+					updateOutputImage();
+					enableComponents();
+
+					updateElementsFromModelData();
+				}
+			}
+		});
+	}
+
+	private void saveOutputImage()
+	{
+		SwingUtilities.invokeLater(new Runnable()
+		{
+			public void run()
+			{
+				if (windowData.getOutputImage() == null)
+				{
+					return;
+				}
+
+				String outputFileName = windowData.getInputFilePath();
+				outputFileName = IoHelper.getFileNameWithoutType(outputFileName) + ".grf";
+
+				JFileChooser jf = new JFileChooser(ApplicationConfig.DEFAULT_FILE_PATH);
+				jf.setDialogTitle("Set grf file name");
+				jf.setSelectedFile(new File(outputFileName));
+
+				if (jf.showSaveDialog(grfGeneratorFrame) == JFileChooser.APPROVE_OPTION)
+				{
+					File file = jf.getSelectedFile();
+
+					GrfGenerator grf = new GrfGenerator();
+					grf.setCompressHex(windowData.isCompress());
+					grf.setBlacknessLimitPercentage(windowData.getBlackness());
+					grf.loadImage(windowData.getOutputImage());
+
+					String grfData = grf.getGrf(file.getName());
+					IoHelper.saveTextFile(file, grfData, true);
+				}
+			}
+		});
 	}
 }
