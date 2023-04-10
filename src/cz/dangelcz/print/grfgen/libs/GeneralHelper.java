@@ -302,4 +302,15 @@ public class GeneralHelper
 			e.printStackTrace();
 		}
 	}
+	
+	public static String getPomXmlVersion()
+	{
+		Package mainPackage = GeneralHelper.class.getPackage();
+		String version = mainPackage.getImplementationVersion();
+		//String groupId = mainPackage.getName();
+		//String artifactId = mainPackage.getImplementationTitle();
+		
+		return version;
+	}
+	
 }

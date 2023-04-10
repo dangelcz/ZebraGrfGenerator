@@ -1,5 +1,6 @@
 package cz.dangelcz.print.grfgen.gui.window;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
@@ -8,7 +9,7 @@ import javax.swing.JPanel;
 public class ImagePanel extends JPanel
 {
 	private static final long serialVersionUID = 1493070454704311553L;
-	
+
 	private BufferedImage image;
 
 	public ImagePanel()
@@ -29,7 +30,7 @@ public class ImagePanel extends JPanel
 	@Override
 	protected void paintComponent(Graphics g)
 	{
-		super.paintComponent(g);
+		drawBackground(g);
 
 		if (image == null)
 		{
@@ -40,5 +41,13 @@ public class ImagePanel extends JPanel
 		int y = getHeight() / 2 - image.getHeight() / 2;
 
 		g.drawImage(image, x, y, null);
+	}
+
+	private void drawBackground(Graphics g)
+	{
+		Color background = this.getRootPane().getBackground();
+		
+		g.setColor(background);
+		g.fillRect(0, 0, getWidth(), getHeight());
 	}
 }
