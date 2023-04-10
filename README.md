@@ -10,7 +10,7 @@ Java runtime environment 8
 
 # Usage
 1. Start the program
-2. Set input file
+2. Choose input file (you can drag & drop)
 3. Set required blackness threshold
 4. Transform image
     * Flip

@@ -12,7 +12,7 @@ public class ApplicationLauncher
 {
 	public static void main(String[] args)
 	{
-		FlatLightLaf.setup();
+		FlatDarculaLaf.setup();
 		
 		SwingUtilities.invokeLater(new Runnable()
 		{
