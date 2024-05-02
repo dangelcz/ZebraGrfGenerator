@@ -4,12 +4,15 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
@@ -25,6 +28,8 @@ public class GrfGeneratorWindowLayout
 {
 	protected GrfGeneratorWindow window;
 	
+	private Font boldFont = new Font("Courier", Font.BOLD, 12);
+
 	public GrfGeneratorWindowLayout(GrfGeneratorWindow window)
 	{
 		this.window = window;
@@ -38,6 +43,7 @@ public class GrfGeneratorWindowLayout
 		controlPanel.setLayout(sl_controlPanel);
 
 		JLabel lblInputFile = new JLabel("Input file");
+		lblInputFile.setFont(boldFont);
 		sl_controlPanel.putConstraint(SpringLayout.NORTH, lblInputFile, 10, SpringLayout.NORTH, controlPanel);
 		sl_controlPanel.putConstraint(SpringLayout.WEST, lblInputFile, 10, SpringLayout.WEST, controlPanel);
 		sl_controlPanel.putConstraint(SpringLayout.EAST, lblInputFile, -10, SpringLayout.EAST, controlPanel);
@@ -56,6 +62,7 @@ public class GrfGeneratorWindowLayout
 		filePathInputField.setColumns(10);
 
 		JLabel lblBlackness = new JLabel("Color threshold");
+		lblBlackness.setFont(boldFont);
 		sl_controlPanel.putConstraint(SpringLayout.NORTH, lblBlackness, 6, SpringLayout.SOUTH, filePathInputField);
 		sl_controlPanel.putConstraint(SpringLayout.WEST, lblBlackness, 0, SpringLayout.WEST, lblInputFile);
 		sl_controlPanel.putConstraint(SpringLayout.EAST, lblBlackness, 0, SpringLayout.EAST, lblInputFile);
@@ -76,7 +83,7 @@ public class GrfGeneratorWindowLayout
 		sl_controlPanel.putConstraint(SpringLayout.EAST, blacknessSlider, -10, SpringLayout.EAST, controlPanel);
 		controlPanel.add(blacknessSlider);
 
-		JCheckBox useCompressionCheckBox = window.useCompressionCheckBox; 
+		JCheckBox useCompressionCheckBox = window.useCompressionCheckBox;
 		useCompressionCheckBox.setText("Use ZPL compression");
 		useCompressionCheckBox.setEnabled(false);
 		sl_controlPanel.putConstraint(SpringLayout.NORTH, useCompressionCheckBox, 6, SpringLayout.SOUTH, blacknessSlider);
@@ -105,6 +112,7 @@ public class GrfGeneratorWindowLayout
 		window.grfGeneratorFrame.getContentPane().add(controlPanel, BorderLayout.WEST);
 
 		JLabel lblRotate = new JLabel("Rotate");
+		lblRotate.setFont(boldFont);
 		sl_controlPanel.putConstraint(SpringLayout.WEST, lblRotate, 10, SpringLayout.WEST, controlPanel);
 		sl_controlPanel.putConstraint(SpringLayout.EAST, lblRotate, -10, SpringLayout.EAST, controlPanel);
 		controlPanel.add(lblRotate);
@@ -128,7 +136,7 @@ public class GrfGeneratorWindowLayout
 		controlPanel.add(separator_2);
 
 		JButton resetButton = window.resetButton;
-        resetButton.setText("Reset transformation");
+		resetButton.setText("Reset transformation");
 		sl_controlPanel.putConstraint(SpringLayout.WEST, resetButton, 10, SpringLayout.WEST, controlPanel);
 		sl_controlPanel.putConstraint(SpringLayout.SOUTH, resetButton, -10, SpringLayout.SOUTH, separator_2);
 		sl_controlPanel.putConstraint(SpringLayout.EAST, resetButton, -10, SpringLayout.EAST, controlPanel);
@@ -149,7 +157,7 @@ public class GrfGeneratorWindowLayout
 		rotateButtonsPanel.setLayout(gbl_rotateButtonsPanel);
 
 		JButton turnLeftButton = window.turnLeftButton;
-        turnLeftButton.setText("90\u00B0 left");
+		turnLeftButton.setText("90\u00B0 left");
 		GridBagConstraints gbc_turnLeftButton = new GridBagConstraints();
 		gbc_turnLeftButton.fill = GridBagConstraints.HORIZONTAL;
 		gbc_turnLeftButton.insets = new Insets(0, 0, 5, 5);
@@ -160,7 +168,7 @@ public class GrfGeneratorWindowLayout
 		sl_controlPanel.putConstraint(SpringLayout.NORTH, turnLeftButton, 10, SpringLayout.SOUTH, lblRotate);
 
 		JButton turnRightButton = window.turnRightButton;
-        turnRightButton.setText("90\u00B0 right");
+		turnRightButton.setText("90\u00B0 right");
 		GridBagConstraints gbc_turnRightButton = new GridBagConstraints();
 		gbc_turnRightButton.fill = GridBagConstraints.HORIZONTAL;
 		gbc_turnRightButton.insets = new Insets(0, 0, 5, 0);
@@ -172,7 +180,7 @@ public class GrfGeneratorWindowLayout
 		turnRightButton.setEnabled(false);
 
 		JButton turn180Button = window.turn180Button;
-        turn180Button.setText("180\u00B0");
+		turn180Button.setText("180\u00B0");
 		GridBagConstraints gbc_turn180Button = new GridBagConstraints();
 		gbc_turn180Button.fill = GridBagConstraints.HORIZONTAL;
 		gbc_turn180Button.gridwidth = 2;
@@ -185,7 +193,7 @@ public class GrfGeneratorWindowLayout
 		turn180Button.setEnabled(false);
 
 		JButton flipHorizontalyButton = window.flipHorizontalyButton;
-        flipHorizontalyButton.setText("Flip horz.");
+		flipHorizontalyButton.setText("Flip horz.");
 		GridBagConstraints gbc_flipHorizontalyButton = new GridBagConstraints();
 		gbc_flipHorizontalyButton.fill = GridBagConstraints.HORIZONTAL;
 		gbc_flipHorizontalyButton.insets = new Insets(0, 0, 0, 5);
@@ -197,7 +205,7 @@ public class GrfGeneratorWindowLayout
 		flipHorizontalyButton.setEnabled(false);
 
 		JButton flipVerticallyButton = window.flipVerticallyButton;
-        flipVerticallyButton.setText("Flip vert.");
+		flipVerticallyButton.setText("Flip vert.");
 		GridBagConstraints gbc_flipVerticallyButton = new GridBagConstraints();
 		gbc_flipVerticallyButton.fill = GridBagConstraints.HORIZONTAL;
 		gbc_flipVerticallyButton.gridx = 1;
@@ -207,7 +215,8 @@ public class GrfGeneratorWindowLayout
 
 		flipVerticallyButton.setEnabled(false);
 
-		JLabel lblNewLabel_2 = new JLabel("Resize");
+		JLabel lblNewLabel_2 = new JLabel("Resize (px)");
+		lblNewLabel_2.setFont(boldFont);
 		sl_controlPanel.putConstraint(SpringLayout.NORTH, lblNewLabel_2, 6, SpringLayout.SOUTH, separator_1);
 		sl_controlPanel.putConstraint(SpringLayout.WEST, lblNewLabel_2, 10, SpringLayout.WEST, controlPanel);
 		sl_controlPanel.putConstraint(SpringLayout.EAST, lblNewLabel_2, -10, SpringLayout.EAST, controlPanel);
@@ -226,7 +235,7 @@ public class GrfGeneratorWindowLayout
 		resizePanel.setLayout(gbl_resizePanel);
 
 		JLabel originalSizeLabel = window.originalSizeLabel;
-        originalSizeLabel.setText("Original size");
+		originalSizeLabel.setText("Original size");
 		GridBagConstraints gbc_originalSizeLabel = new GridBagConstraints();
 		gbc_originalSizeLabel.anchor = GridBagConstraints.WEST;
 		gbc_originalSizeLabel.gridwidth = 2;
@@ -271,7 +280,7 @@ public class GrfGeneratorWindowLayout
 		resizePanel.add(newHeightSpinner, gbc_newHeightSpinner);
 
 		JCheckBox aspectRatioCheckBox = window.aspectRatioCheckBox;
-        aspectRatioCheckBox.setText("Keep aspect ratio");
+		aspectRatioCheckBox.setText("Keep aspect ratio");
 		aspectRatioCheckBox.setEnabled(false);
 		GridBagConstraints gbc_aspectRatioCheckBox = new GridBagConstraints();
 		gbc_aspectRatioCheckBox.anchor = GridBagConstraints.EAST;
@@ -280,6 +289,93 @@ public class GrfGeneratorWindowLayout
 		gbc_aspectRatioCheckBox.gridy = 3;
 		resizePanel.add(aspectRatioCheckBox, gbc_aspectRatioCheckBox);
 
+		
+		JSeparator separator_3 = new JSeparator();
+		sl_controlPanel.putConstraint(SpringLayout.WEST, separator_3, 10, SpringLayout.WEST, controlPanel);
+		sl_controlPanel.putConstraint(SpringLayout.NORTH, separator_3, 10, SpringLayout.SOUTH, resizePanel);
+		sl_controlPanel.putConstraint(SpringLayout.EAST, separator_3, -10, SpringLayout.EAST, controlPanel);
+		controlPanel.add(separator_3);
+		
+		JLabel lblNewLabel_2_1 = new JLabel("Real size (mm)");
+		lblNewLabel_2_1.setFont(boldFont);
+		sl_controlPanel.putConstraint(SpringLayout.NORTH, lblNewLabel_2_1, 10, SpringLayout.SOUTH, separator_3);
+		sl_controlPanel.putConstraint(SpringLayout.WEST, lblNewLabel_2_1, 0, SpringLayout.WEST, lblInputFile);
+		sl_controlPanel.putConstraint(SpringLayout.EAST, lblNewLabel_2_1, 0, SpringLayout.EAST, lblInputFile);
+		controlPanel.add(lblNewLabel_2_1);
+		
+		
+		JPanel expectedSizePanel = new JPanel();
+		sl_controlPanel.putConstraint(SpringLayout.NORTH, expectedSizePanel, 10, SpringLayout.SOUTH, lblNewLabel_2_1);
+		sl_controlPanel.putConstraint(SpringLayout.WEST, expectedSizePanel, 10, SpringLayout.WEST, controlPanel);
+		sl_controlPanel.putConstraint(SpringLayout.EAST, expectedSizePanel, -10, SpringLayout.EAST, controlPanel);
+		controlPanel.add(expectedSizePanel);
+		GridBagLayout gbl_expectedSizePanela = new GridBagLayout();
+		gbl_expectedSizePanela.columnWidths = new int[]{0, 0, 0};
+		gbl_expectedSizePanela.rowHeights = new int[] {0, 0, 0};
+		gbl_expectedSizePanela.columnWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
+		gbl_expectedSizePanela.rowWeights = new double[]{0.0, 0.0, 0.0};
+		expectedSizePanel.setLayout(gbl_expectedSizePanela);
+		
+		JLabel lblNewLabel_5 = new JLabel("Zebra DPI");
+		GridBagConstraints gbc_lblNewLabel_5 = new GridBagConstraints();
+		gbc_lblNewLabel_5.anchor = GridBagConstraints.EAST;
+		gbc_lblNewLabel_5.insets = new Insets(0, 0, 5, 5);
+		gbc_lblNewLabel_5.gridx = 0;
+		gbc_lblNewLabel_5.gridy = 0;
+		expectedSizePanel.add(lblNewLabel_5, gbc_lblNewLabel_5);
+		
+		JComboBox<Integer> zebraDpiComboBox = window.zebraDpiComboBox;
+		zebraDpiComboBox.setEnabled(false);
+		zebraDpiComboBox.setModel(new DefaultComboBoxModel<Integer>(new Integer[] { 203, 300, 600 }));
+		GridBagConstraints gbc_zebraDpiComboBox = new GridBagConstraints();
+		gbc_zebraDpiComboBox.insets = new Insets(0, 0, 5, 0);
+		gbc_zebraDpiComboBox.fill = GridBagConstraints.HORIZONTAL;
+		gbc_zebraDpiComboBox.gridx = 1;
+		gbc_zebraDpiComboBox.gridy = 0;
+		expectedSizePanel.add(window.zebraDpiComboBox, gbc_zebraDpiComboBox);
+		
+		JLabel lblNewLabel_6 = new JLabel("Width");
+		GridBagConstraints gbc_lblNewLabel_6 = new GridBagConstraints();
+		gbc_lblNewLabel_6.anchor = GridBagConstraints.EAST;
+		gbc_lblNewLabel_6.insets = new Insets(0, 0, 5, 5);
+		gbc_lblNewLabel_6.gridx = 0;
+		gbc_lblNewLabel_6.gridy = 1;
+		expectedSizePanel.add(lblNewLabel_6, gbc_lblNewLabel_6);
+		
+		JTextField expectedWidthTextField = window.expectedWidthTextField;
+		expectedWidthTextField.setEditable(false);
+		expectedWidthTextField.setEnabled(false);
+		GridBagConstraints gbc_expectedWidthTextField = new GridBagConstraints();
+		gbc_expectedWidthTextField.insets = new Insets(0, 0, 5, 0);
+		gbc_expectedWidthTextField.fill = GridBagConstraints.HORIZONTAL;
+		gbc_expectedWidthTextField.gridx = 1;
+		gbc_expectedWidthTextField.gridy = 1;
+		expectedSizePanel.add(expectedWidthTextField, gbc_expectedWidthTextField);
+		expectedWidthTextField.setColumns(10);
+		
+		JLabel lblNewLabel_7 = new JLabel("Height");
+		GridBagConstraints gbc_lblNewLabel_7 = new GridBagConstraints();
+		gbc_lblNewLabel_7.anchor = GridBagConstraints.EAST;
+		gbc_lblNewLabel_7.insets = new Insets(0, 0, 0, 5);
+		gbc_lblNewLabel_7.gridx = 0;
+		gbc_lblNewLabel_7.gridy = 2;
+		expectedSizePanel.add(lblNewLabel_7, gbc_lblNewLabel_7);
+		
+		JTextField expectedHeightTextField = window.expectedHeightTextField;
+		expectedHeightTextField.setEditable(false);
+		expectedHeightTextField.setEnabled(false);
+		GridBagConstraints gbc_expectedHeightTextField = new GridBagConstraints();
+		gbc_expectedHeightTextField.fill = GridBagConstraints.HORIZONTAL;
+		gbc_expectedHeightTextField.gridx = 1;
+		gbc_expectedHeightTextField.gridy = 2;
+		expectedSizePanel.add(expectedHeightTextField, gbc_expectedHeightTextField);
+		expectedHeightTextField.setColumns(10);
+		
+
+		
+		
+		
+		
 		JSplitPane splitPane = new JSplitPane();
 		splitPane.setMinimumSize(new Dimension(250, 30));
 		splitPane.setDividerSize(5);

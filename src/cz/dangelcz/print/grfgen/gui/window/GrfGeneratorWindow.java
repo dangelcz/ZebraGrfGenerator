@@ -5,6 +5,7 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JSpinner;
@@ -65,6 +66,10 @@ public class GrfGeneratorWindow
 	JLabel originalSizeLabel;
 	JSpinner newHeightSpinner;
 	JCheckBox aspectRatioCheckBox;
+	
+	JComboBox<Integer> zebraDpiComboBox;
+	JTextField expectedWidthTextField;
+	JTextField expectedHeightTextField;
 
 	private boolean resolutionsSpinnerLock = false;
 
@@ -85,7 +90,7 @@ public class GrfGeneratorWindow
 
 		String version = GeneralHelper.getPomXmlVersion();
 		grfGeneratorFrame.setTitle("GRF generator " + version);
-		grfGeneratorFrame.setBounds(100, 100, 1300, 700);
+		grfGeneratorFrame.setBounds(100, 100, 1400, 800);
 		grfGeneratorFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		grfGeneratorFrame.getContentPane().setLayout(new BorderLayout(0, 0));
 
@@ -277,8 +282,9 @@ public class GrfGeneratorWindow
 			{
 				GrfGeneratorWindow.this.loadInputImage(file);
 			}
-
 		});
+		
+		zebraDpiComboBox.addActionListener(e-> updateExpectedSize());
 	}
 
 	private void registerSystemShortcuts()
@@ -312,6 +318,9 @@ public class GrfGeneratorWindow
 		newWidthSpinner.setEnabled(true);
 		newHeightSpinner.setEnabled(true);
 		aspectRatioCheckBox.setEnabled(true);
+		zebraDpiComboBox.setEnabled(true);
+		expectedWidthTextField.setEnabled(true);
+		expectedHeightTextField.setEnabled(true);
 	}
 
 	public void setBlackness(int value)
@@ -341,6 +350,8 @@ public class GrfGeneratorWindow
 
 		setNewWidth(windowData.getScaledImage().getWidth());
 		setNewHeight(windowData.getScaledImage().getHeight());
+		
+		updateExpectedSize();
 
 		repaintImages();
 	}
@@ -398,6 +409,20 @@ public class GrfGeneratorWindow
 		resolutionsSpinnerLock = true;
 		newHeightSpinner.setValue(newHeight);
 		resolutionsSpinnerLock = false;
+	}
+	
+	private void updateExpectedSize()
+	{
+		double newWidth = windowData.getScaledImage().getWidth();
+		double newHeight = windowData.getScaledImage().getHeight();
+		double dpi = (Integer) zebraDpiComboBox.getSelectedItem();
+
+		// 25.4 = DPI
+		int expectedWidth = (int) ((newWidth * 25.4) / dpi);
+		int expectedHeight = (int) ((newHeight * 25.4) / dpi);
+
+		expectedWidthTextField.setText("" + expectedWidth);
+		expectedHeightTextField.setText("" + expectedHeight);
 	}
 
 	private void chooseInputImage()
