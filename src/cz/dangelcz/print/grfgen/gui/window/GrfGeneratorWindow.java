@@ -268,14 +268,7 @@ public class GrfGeneratorWindow
 			}
 		});
 
-		aspectRatioCheckBox.addActionListener(new ActionListener()
-		{
-			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				windowData.setKeepAspectRatio(aspectRatioCheckBox.isSelected());
-			}
-		});
+		aspectRatioCheckBox.addActionListener(e -> windowData.setKeepAspectRatio(aspectRatioCheckBox.isSelected()));
 
 		grfGeneratorFrame.setTransferHandler(new FileDropHandler()
 		{
@@ -290,23 +283,17 @@ public class GrfGeneratorWindow
 
 	private void registerSystemShortcuts()
 	{
-		grfGeneratorFrame.getRootPane().registerKeyboardAction(new ActionListener()
-		{
-			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				chooseInputImage();
-			}
-		}, KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_MASK), JComponent.WHEN_IN_FOCUSED_WINDOW);
+		grfGeneratorFrame.getRootPane().registerKeyboardAction (
+				e -> chooseInputImage(),
+				KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_MASK),
+				JComponent.WHEN_IN_FOCUSED_WINDOW
+		);
 
-		grfGeneratorFrame.getRootPane().registerKeyboardAction(new ActionListener()
-		{
-			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				saveGrfOutput();
-			}
-		}, KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_MASK), JComponent.WHEN_IN_FOCUSED_WINDOW);
+		grfGeneratorFrame.getRootPane().registerKeyboardAction(
+				e -> saveGrfOutput(),
+				KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_MASK),
+				JComponent.WHEN_IN_FOCUSED_WINDOW
+	  );
 	}
 
 	public void enableComponents()
