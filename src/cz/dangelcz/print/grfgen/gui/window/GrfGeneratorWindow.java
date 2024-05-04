@@ -50,6 +50,7 @@ public class GrfGeneratorWindow
 	JSpinner blacknessSpinner;
 	JSlider blacknessSlider;
 	JCheckBox useCompressionCheckBox;
+	JCheckBox generateVerticalCheckBox;
 	JButton turnLeftButton;
 	JButton turnRightButton;
 	JButton turn180Button;

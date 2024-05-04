@@ -87,6 +87,13 @@ public class GrfGeneratorWindowLayout
 		sl_controlPanel.putConstraint(SpringLayout.WEST, useCompressionCheckBox, 10, SpringLayout.WEST, controlPanel);
 		sl_controlPanel.putConstraint(SpringLayout.EAST, useCompressionCheckBox, -10, SpringLayout.EAST, controlPanel);
 		controlPanel.add(useCompressionCheckBox);
+		
+		JCheckBox generateVerticalCheckBox = window.generateVerticalCheckBox;
+		generateVerticalCheckBox.setText("Generate vertical variant");
+		sl_controlPanel.putConstraint(SpringLayout.NORTH, generateVerticalCheckBox, 6, SpringLayout.SOUTH, useCompressionCheckBox);
+		sl_controlPanel.putConstraint(SpringLayout.WEST, generateVerticalCheckBox, 10, SpringLayout.WEST, controlPanel);
+		sl_controlPanel.putConstraint(SpringLayout.EAST, generateVerticalCheckBox, -10, SpringLayout.EAST, controlPanel);
+		controlPanel.add(generateVerticalCheckBox);
 
 		JButton btnSaveGrf = window.btnSaveGrf;
 		btnSaveGrf.setText("Save GRF");
@@ -116,7 +123,7 @@ public class GrfGeneratorWindowLayout
 		sl_controlPanel.putConstraint(SpringLayout.NORTH, lblRotate, 10, SpringLayout.SOUTH, separator);
 		sl_controlPanel.putConstraint(SpringLayout.WEST, separator, 10, SpringLayout.WEST, controlPanel);
 		sl_controlPanel.putConstraint(SpringLayout.EAST, separator, -10, SpringLayout.EAST, controlPanel);
-		sl_controlPanel.putConstraint(SpringLayout.NORTH, separator, 6, SpringLayout.SOUTH, useCompressionCheckBox);
+		sl_controlPanel.putConstraint(SpringLayout.NORTH, separator, 6, SpringLayout.SOUTH, generateVerticalCheckBox);
 		controlPanel.add(separator);
 
 		JSeparator separator_1 = new JSeparator();
