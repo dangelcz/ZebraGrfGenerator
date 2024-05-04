@@ -22,6 +22,7 @@ import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.event.ChangeListener;
@@ -66,12 +67,14 @@ public class GrfGeneratorWindow
 	JLabel originalSizeLabel;
 	JSpinner newHeightSpinner;
 	JCheckBox aspectRatioCheckBox;
-	
+
 	JComboBox<Integer> zebraDpiComboBox;
 	JTextField expectedWidthTextField;
 	JTextField expectedHeightTextField;
 
 	private boolean resolutionsSpinnerLock = false;
+
+	private List<JComponent> allComponents;
 
 	// 'model' item
 	private GrfGeneratorWindowData windowData;
@@ -102,14 +105,37 @@ public class GrfGeneratorWindow
 		GrfGeneratorWindowLayout layout = new GrfGeneratorWindowLayout(this);
 		layout.layoutComponents();
 
+		disableComponents();
+
 		initEvents();
 	}
 
+	public void enableComponents()
+	{
+		for (JComponent component : allComponents)
+		{
+			component.setEnabled(true);
+		}
+	}
+
+	public void disableComponents()
+	{
+		for (JComponent component : allComponents)
+		{
+			component.setEnabled(false);
+		}
+
+		// let only file chooser be enabled
+		filePathInputField.setEnabled(true);
+	}
+
 	/**
-	 * Generic instantiation of components
+	 * Generic instantiation of all components
 	 */
 	private void constructComponents()
 	{
+		allComponents = new ArrayList<>();
+
 		try
 		{
 			List<Field> fields = Reflection.fieldsOfClass(this.getClass(), JComponent.class);
@@ -118,6 +144,7 @@ public class GrfGeneratorWindow
 			{
 				Object windowComponent = field.getType().newInstance();
 				field.set(this, windowComponent);
+				allComponents.add((JComponent) windowComponent);
 			}
 		} catch (Exception e)
 		{
@@ -283,8 +310,8 @@ public class GrfGeneratorWindow
 				GrfGeneratorWindow.this.loadInputImage(file);
 			}
 		});
-		
-		zebraDpiComboBox.addActionListener(e-> updateExpectedSize());
+
+		zebraDpiComboBox.addActionListener(e -> updateExpectedSize());
 	}
 
 	private void registerSystemShortcuts()
@@ -300,27 +327,6 @@ public class GrfGeneratorWindow
 				KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_MASK),
 				JComponent.WHEN_IN_FOCUSED_WINDOW
 	  );
-	}
-
-	public void enableComponents()
-	{
-		blacknessSpinner.setEnabled(true);
-		blacknessSlider.setEnabled(true);
-		useCompressionCheckBox.setEnabled(true);
-		turnLeftButton.setEnabled(true);
-		turnRightButton.setEnabled(true);
-		turn180Button.setEnabled(true);
-		flipHorizontalyButton.setEnabled(true);
-		flipVerticallyButton.setEnabled(true);
-		btnSaveGrf.setEnabled(true);
-		btnSaveZpl.setEnabled(true);
-		resetButton.setEnabled(true);
-		newWidthSpinner.setEnabled(true);
-		newHeightSpinner.setEnabled(true);
-		aspectRatioCheckBox.setEnabled(true);
-		zebraDpiComboBox.setEnabled(true);
-		expectedWidthTextField.setEnabled(true);
-		expectedHeightTextField.setEnabled(true);
 	}
 
 	public void setBlackness(int value)
@@ -350,7 +356,7 @@ public class GrfGeneratorWindow
 
 		setNewWidth(windowData.getScaledImage().getWidth());
 		setNewHeight(windowData.getScaledImage().getHeight());
-		
+
 		updateExpectedSize();
 
 		repaintImages();
@@ -410,7 +416,7 @@ public class GrfGeneratorWindow
 		newHeightSpinner.setValue(newHeight);
 		resolutionsSpinnerLock = false;
 	}
-	
+
 	private void updateExpectedSize()
 	{
 		double newWidth = windowData.getScaledImage().getWidth();

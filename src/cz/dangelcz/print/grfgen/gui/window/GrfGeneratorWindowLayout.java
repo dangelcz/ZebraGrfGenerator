@@ -71,13 +71,11 @@ public class GrfGeneratorWindowLayout
 		JSpinner blacknessSpinner = window.blacknessSpinner;
 		sl_controlPanel.putConstraint(SpringLayout.NORTH, blacknessSpinner, 6, SpringLayout.SOUTH, lblBlackness);
 		blacknessSpinner.setModel(new SpinnerNumberModel(0, 0, 100, 1));
-		blacknessSpinner.setEnabled(false);
 		sl_controlPanel.putConstraint(SpringLayout.WEST, blacknessSpinner, 10, SpringLayout.WEST, controlPanel);
 		sl_controlPanel.putConstraint(SpringLayout.EAST, blacknessSpinner, -10, SpringLayout.EAST, controlPanel);
 		controlPanel.add(blacknessSpinner);
 
 		JSlider blacknessSlider = window.blacknessSlider;
-		blacknessSlider.setEnabled(false);
 		sl_controlPanel.putConstraint(SpringLayout.NORTH, blacknessSlider, 12, SpringLayout.SOUTH, blacknessSpinner);
 		sl_controlPanel.putConstraint(SpringLayout.WEST, blacknessSlider, 10, SpringLayout.WEST, controlPanel);
 		sl_controlPanel.putConstraint(SpringLayout.EAST, blacknessSlider, -10, SpringLayout.EAST, controlPanel);
@@ -85,7 +83,6 @@ public class GrfGeneratorWindowLayout
 
 		JCheckBox useCompressionCheckBox = window.useCompressionCheckBox;
 		useCompressionCheckBox.setText("Use ZPL compression");
-		useCompressionCheckBox.setEnabled(false);
 		sl_controlPanel.putConstraint(SpringLayout.NORTH, useCompressionCheckBox, 6, SpringLayout.SOUTH, blacknessSlider);
 		sl_controlPanel.putConstraint(SpringLayout.WEST, useCompressionCheckBox, 10, SpringLayout.WEST, controlPanel);
 		sl_controlPanel.putConstraint(SpringLayout.EAST, useCompressionCheckBox, -10, SpringLayout.EAST, controlPanel);
@@ -94,14 +91,12 @@ public class GrfGeneratorWindowLayout
 		JButton btnSaveGrf = window.btnSaveGrf;
 		btnSaveGrf.setText("Save GRF");
 		btnSaveGrf.setToolTipText("Ctrl+S");
-		btnSaveGrf.setEnabled(false);
 		sl_controlPanel.putConstraint(SpringLayout.WEST, btnSaveGrf, 10, SpringLayout.WEST, controlPanel);
 		sl_controlPanel.putConstraint(SpringLayout.EAST, btnSaveGrf, -10, SpringLayout.EAST, controlPanel);
 		controlPanel.add(btnSaveGrf);
 
 		JButton btnSaveZpl = window.btnSaveZpl;
 		btnSaveZpl.setText("Save ZPL");
-		btnSaveZpl.setEnabled(false);
 		sl_controlPanel.putConstraint(SpringLayout.SOUTH, btnSaveGrf, -10, SpringLayout.NORTH, btnSaveZpl);
 		sl_controlPanel.putConstraint(SpringLayout.WEST, btnSaveZpl, 10, SpringLayout.WEST, controlPanel);
 		sl_controlPanel.putConstraint(SpringLayout.SOUTH, btnSaveZpl, -10, SpringLayout.SOUTH, controlPanel);
@@ -141,7 +136,6 @@ public class GrfGeneratorWindowLayout
 		sl_controlPanel.putConstraint(SpringLayout.SOUTH, resetButton, -10, SpringLayout.SOUTH, separator_2);
 		sl_controlPanel.putConstraint(SpringLayout.EAST, resetButton, -10, SpringLayout.EAST, controlPanel);
 
-		resetButton.setEnabled(false);
 		controlPanel.add(resetButton);
 
 		JPanel rotateButtonsPanel = new JPanel();
@@ -164,7 +158,6 @@ public class GrfGeneratorWindowLayout
 		gbc_turnLeftButton.gridx = 0;
 		gbc_turnLeftButton.gridy = 0;
 		rotateButtonsPanel.add(turnLeftButton, gbc_turnLeftButton);
-		turnLeftButton.setEnabled(false);
 		sl_controlPanel.putConstraint(SpringLayout.NORTH, turnLeftButton, 10, SpringLayout.SOUTH, lblRotate);
 
 		JButton turnRightButton = window.turnRightButton;
@@ -177,7 +170,6 @@ public class GrfGeneratorWindowLayout
 		rotateButtonsPanel.add(turnRightButton, gbc_turnRightButton);
 		sl_controlPanel.putConstraint(SpringLayout.NORTH, turnRightButton, 46, SpringLayout.SOUTH, lblRotate);
 
-		turnRightButton.setEnabled(false);
 
 		JButton turn180Button = window.turn180Button;
 		turn180Button.setText("180\u00B0");
@@ -190,7 +182,6 @@ public class GrfGeneratorWindowLayout
 		rotateButtonsPanel.add(turn180Button, gbc_turn180Button);
 		sl_controlPanel.putConstraint(SpringLayout.NORTH, turn180Button, 82, SpringLayout.SOUTH, lblRotate);
 
-		turn180Button.setEnabled(false);
 
 		JButton flipHorizontalyButton = window.flipHorizontalyButton;
 		flipHorizontalyButton.setText("Flip horz.");
@@ -202,7 +193,6 @@ public class GrfGeneratorWindowLayout
 		rotateButtonsPanel.add(flipHorizontalyButton, gbc_flipHorizontalyButton);
 		sl_controlPanel.putConstraint(SpringLayout.NORTH, flipHorizontalyButton, 118, SpringLayout.SOUTH, lblRotate);
 
-		flipHorizontalyButton.setEnabled(false);
 
 		JButton flipVerticallyButton = window.flipVerticallyButton;
 		flipVerticallyButton.setText("Flip vert.");
@@ -213,7 +203,6 @@ public class GrfGeneratorWindowLayout
 		rotateButtonsPanel.add(flipVerticallyButton, gbc_flipVerticallyButton);
 		sl_controlPanel.putConstraint(SpringLayout.NORTH, flipVerticallyButton, 154, SpringLayout.SOUTH, lblRotate);
 
-		flipVerticallyButton.setEnabled(false);
 
 		JLabel lblNewLabel_2 = new JLabel("Resize (px)");
 		lblNewLabel_2.setFont(boldFont);
@@ -254,7 +243,6 @@ public class GrfGeneratorWindowLayout
 
 		JSpinner newWidthSpinner = window.newWidthSpinner;
 
-		newWidthSpinner.setEnabled(false);
 		GridBagConstraints gbc_newWidthSpinner = new GridBagConstraints();
 		gbc_newWidthSpinner.insets = new Insets(0, 0, 5, 0);
 		gbc_newWidthSpinner.fill = GridBagConstraints.HORIZONTAL;
@@ -271,7 +259,6 @@ public class GrfGeneratorWindowLayout
 		resizePanel.add(lblNewLabel_4, gbc_lblNewLabel_4);
 
 		JSpinner newHeightSpinner = window.newHeightSpinner;
-		newHeightSpinner.setEnabled(false);
 		GridBagConstraints gbc_newHeightSpinner = new GridBagConstraints();
 		gbc_newHeightSpinner.insets = new Insets(0, 0, 5, 0);
 		gbc_newHeightSpinner.fill = GridBagConstraints.HORIZONTAL;
@@ -281,7 +268,6 @@ public class GrfGeneratorWindowLayout
 
 		JCheckBox aspectRatioCheckBox = window.aspectRatioCheckBox;
 		aspectRatioCheckBox.setText("Keep aspect ratio");
-		aspectRatioCheckBox.setEnabled(false);
 		GridBagConstraints gbc_aspectRatioCheckBox = new GridBagConstraints();
 		gbc_aspectRatioCheckBox.anchor = GridBagConstraints.EAST;
 		gbc_aspectRatioCheckBox.gridwidth = 2;
@@ -325,7 +311,6 @@ public class GrfGeneratorWindowLayout
 		expectedSizePanel.add(lblNewLabel_5, gbc_lblNewLabel_5);
 		
 		JComboBox<Integer> zebraDpiComboBox = window.zebraDpiComboBox;
-		zebraDpiComboBox.setEnabled(false);
 		zebraDpiComboBox.setModel(new DefaultComboBoxModel<Integer>(new Integer[] { 203, 300, 600 }));
 		GridBagConstraints gbc_zebraDpiComboBox = new GridBagConstraints();
 		gbc_zebraDpiComboBox.insets = new Insets(0, 0, 5, 0);
@@ -344,7 +329,6 @@ public class GrfGeneratorWindowLayout
 		
 		JTextField expectedWidthTextField = window.expectedWidthTextField;
 		expectedWidthTextField.setEditable(false);
-		expectedWidthTextField.setEnabled(false);
 		GridBagConstraints gbc_expectedWidthTextField = new GridBagConstraints();
 		gbc_expectedWidthTextField.insets = new Insets(0, 0, 5, 0);
 		gbc_expectedWidthTextField.fill = GridBagConstraints.HORIZONTAL;
@@ -363,7 +347,6 @@ public class GrfGeneratorWindowLayout
 		
 		JTextField expectedHeightTextField = window.expectedHeightTextField;
 		expectedHeightTextField.setEditable(false);
-		expectedHeightTextField.setEnabled(false);
 		GridBagConstraints gbc_expectedHeightTextField = new GridBagConstraints();
 		gbc_expectedHeightTextField.fill = GridBagConstraints.HORIZONTAL;
 		gbc_expectedHeightTextField.gridx = 1;
