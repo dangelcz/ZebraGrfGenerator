@@ -33,6 +33,7 @@ public class GrfGeneratorWindowData
 	private double aspectRatio;
 
 	private boolean keepAspectRatio;
+	private boolean generateVertical;
 
 	public void loadSourceImage(String inputImagePath)
 	{
@@ -203,5 +204,15 @@ public class GrfGeneratorWindowData
 	public BufferedImage getRotatedImage()
 	{
 		return this.rotatedImage;
+	}
+
+	public boolean isGenerateVertical()
+	{
+		return generateVertical;
+	}
+
+	public void setGenerateVertical(boolean generateVertical)
+	{
+		this.generateVertical = generateVertical;
 	}
 }

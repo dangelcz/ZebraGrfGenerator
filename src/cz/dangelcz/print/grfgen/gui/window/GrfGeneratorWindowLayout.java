@@ -90,6 +90,7 @@ public class GrfGeneratorWindowLayout
 		
 		JCheckBox generateVerticalCheckBox = window.generateVerticalCheckBox;
 		generateVerticalCheckBox.setText("Generate vertical variant");
+		generateVerticalCheckBox.setSelected(true);
 		sl_controlPanel.putConstraint(SpringLayout.NORTH, generateVerticalCheckBox, 6, SpringLayout.SOUTH, useCompressionCheckBox);
 		sl_controlPanel.putConstraint(SpringLayout.WEST, generateVerticalCheckBox, 10, SpringLayout.WEST, controlPanel);
 		sl_controlPanel.putConstraint(SpringLayout.EAST, generateVerticalCheckBox, -10, SpringLayout.EAST, controlPanel);
@@ -362,8 +363,6 @@ public class GrfGeneratorWindowLayout
 		expectedHeightTextField.setColumns(10);
 		
 
-		
-		
 		
 		
 		JSplitPane splitPane = new JSplitPane();

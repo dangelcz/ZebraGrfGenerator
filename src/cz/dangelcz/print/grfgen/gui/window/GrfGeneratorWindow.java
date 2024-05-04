@@ -19,6 +19,7 @@ import javax.swing.SwingUtilities;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.lang.reflect.Field;
@@ -36,6 +37,7 @@ import cz.dangelcz.print.grfgen.libs.UiHelper;
 import cz.dangelcz.print.grfgen.logic.GrfGenerator;
 import cz.dangelcz.print.grfgen.logic.ImageProcessing;
 import cz.dangelcz.print.grfgen.logic.JFileChooserImageFileFilter;
+import cz.dangelcz.print.grfgen.logic.OutputType;
 
 import javax.swing.event.ChangeEvent;
 
@@ -313,6 +315,8 @@ public class GrfGeneratorWindow
 		});
 
 		zebraDpiComboBox.addActionListener(e -> updateExpectedSize());
+		useCompressionCheckBox.addActionListener(e -> windowData.setCompress(useCompressionCheckBox.isSelected()));
+		generateVerticalCheckBox.addActionListener(e -> windowData.setGenerateVertical(generateVerticalCheckBox.isSelected()));
 	}
 
 	private void registerSystemShortcuts()
@@ -484,27 +488,45 @@ public class GrfGeneratorWindow
 	private void saveZplOutput()
 	{
 		SwingUtilities.invokeLater(() -> {
-			File file = getFileToSave("zpl");
-
-			if (file != null)
-			{
-				GrfGenerator grf = fillGeneratorObject();
-				IoHelper.saveTextFile(file, grf.getZpl(), true);
-			}
+			generateAndSaveFiles(OutputType.ZPL);
 		});
 	}
 
 	private void saveGrfOutput()
 	{
 		SwingUtilities.invokeLater(() -> {
-			File file = getFileToSave("grf");
-
-			if (file != null)
-			{
-				GrfGenerator grf = fillGeneratorObject();
-				String grfData = grf.getGrf(file.getName());
-				IoHelper.saveTextFile(file, grfData, true);
-			}
+			generateAndSaveFiles(OutputType.GRF);
 		});
+	}
+	
+	private void generateAndSaveFiles(OutputType fileType)
+	{
+		File file = getFileToSave(fileType.getType());
+
+		if (file == null)
+		{
+			return;
+		}
+
+		GrfGenerator grf = fillGeneratorObject();
+		String grfData = fileType == OutputType.GRF ? grf.getGrf(file.getName()) : grf.getZpl();
+		IoHelper.saveTextFile(file, grfData, true);
+
+		if (windowData.isGenerateVertical())
+		{
+			File fileVertical = prepareRotatedFileAndData("grf", file.getAbsolutePath(), grf);
+			grfData = fileType == OutputType.GRF ? grf.getGrf(file.getName()) : grf.getZpl();
+			IoHelper.saveTextFile(fileVertical, grfData, true);
+		}
+	}
+
+	private File prepareRotatedFileAndData(String fileType, String originalFilePath, GrfGenerator grfGenerator)
+	{
+		BufferedImage outputImage = windowData.getOutputImage();
+		BufferedImage rotated90Image = ImageProcessing.rotate90Left(outputImage);
+		grfGenerator.loadImage(rotated90Image);
+
+		String outputFilePath = IoHelper.getFileNameWithoutType(originalFilePath) + "_v." + fileType;
+		return new File(outputFilePath);
 	}
 }
