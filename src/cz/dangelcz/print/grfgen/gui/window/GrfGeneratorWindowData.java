@@ -41,7 +41,9 @@ public class GrfGeneratorWindowData
 		sourceImage = IoHelper.loadImage(inputImagePath);
 		sourceImage = ImageProcessing.transparencyToWhite(sourceImage);
 		keepAspectRatio = true;
-
+		compress = false;
+		generateVertical = true;
+		
 		updateFromSourceImage();
 	}
 

@@ -19,7 +19,6 @@ import javax.swing.SwingUtilities;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.WindowAdapter;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.lang.reflect.Field;
@@ -501,22 +500,22 @@ public class GrfGeneratorWindow
 	
 	private void generateAndSaveFiles(OutputType fileType)
 	{
-		File file = getFileToSave(fileType.getType());
+		File horizontalImageFile = getFileToSave(fileType.getType());
 
-		if (file == null)
+		if (horizontalImageFile == null)
 		{
 			return;
 		}
 
 		GrfGenerator grf = fillGeneratorObject();
-		String grfData = fileType == OutputType.GRF ? grf.getGrf(file.getName()) : grf.getZpl();
-		IoHelper.saveTextFile(file, grfData, true);
+		String grfData = fileType == OutputType.GRF ? grf.getGrf(horizontalImageFile.getName()) : grf.getZpl();
+		IoHelper.saveTextFile(horizontalImageFile, grfData, true);
 
 		if (windowData.isGenerateVertical())
 		{
-			File fileVertical = prepareRotatedFileAndData("grf", file.getAbsolutePath(), grf);
-			grfData = fileType == OutputType.GRF ? grf.getGrf(file.getName()) : grf.getZpl();
-			IoHelper.saveTextFile(fileVertical, grfData, true);
+			File verticalImageFile = prepareRotatedFileAndData("grf", horizontalImageFile.getAbsolutePath(), grf);
+			grfData = fileType == OutputType.GRF ? grf.getGrf(verticalImageFile.getName()) : grf.getZpl();
+			IoHelper.saveTextFile(verticalImageFile, grfData, true);
 		}
 	}
 

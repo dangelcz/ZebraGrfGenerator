@@ -1,12 +1,8 @@
 package cz.dangelcz.print.grfgen.logic;
 
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
-import javax.imageio.ImageIO;
 
 /**
  * Originally taken from http://www.jcgonzalez.com/java-image-to-zpl-example
