@@ -375,24 +375,34 @@ public class GrfGeneratorWindow
 	public void setModelInstance(GrfGeneratorWindowData data)
 	{
 		windowData = data;
-
-		blacknessSlider.setValue(windowData.getBlackness());
-		blacknessSpinner.setValue(windowData.getBlackness());
+		updateElementsFromModelData();
 	}
 
 	public void updateOriginalSizeLabel()
 	{
-		int width = windowData.getSourceImage().getWidth();
-		int height = windowData.getSourceImage().getHeight();
+		BufferedImage sourceImage = windowData.getSourceImage();
+
+		// in case that no image has been opened yet
+		if (sourceImage == null)
+		{
+			return;
+		}
+
+		int width = sourceImage.getWidth();
+		int height = sourceImage.getHeight();
 		originalSizeLabel.setText("Original size " + width + " x " + height);
 	}
 
 	public void updateElementsFromModelData()
 	{
 		updateOriginalSizeLabel();
+
+		generateVerticalCheckBox.setSelected(windowData.isGenerateVertical());
 		aspectRatioCheckBox.setSelected(windowData.keepAspectRatio());
 		newWidthSpinner.setValue(windowData.getNewWidth());
 		newHeightSpinner.setValue(windowData.getNewHeight());
+		blacknessSlider.setValue(windowData.getBlackness());
+		blacknessSpinner.setValue(windowData.getBlackness());
 	}
 
 	public void applySizeChanges()
@@ -513,7 +523,7 @@ public class GrfGeneratorWindow
 
 		if (windowData.isGenerateVertical())
 		{
-			File verticalImageFile = prepareRotatedFileAndData("grf", horizontalImageFile.getAbsolutePath(), grf);
+			File verticalImageFile = prepareRotatedFileAndData(fileType.getType(), horizontalImageFile.getAbsolutePath(), grf);
 			grfData = fileType == OutputType.GRF ? grf.getGrf(verticalImageFile.getName()) : grf.getZpl();
 			IoHelper.saveTextFile(verticalImageFile, grfData, true);
 		}
