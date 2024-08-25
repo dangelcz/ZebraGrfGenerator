@@ -166,7 +166,6 @@ public class IoHelper
 	
 	public static void saveTextFile(File file, String content, boolean rewrite)
 	{
-
 		if (file.exists() && !rewrite)
 		{
 			return;
@@ -446,8 +445,6 @@ public class IoHelper
 			}
 
 			BufferedImage bi = ImageIO.read(file);
-
-			// int alpha = (colour>>24) & 0xff;
 			return bi;
 		} catch (IOException e)
 		{
@@ -456,5 +453,31 @@ public class IoHelper
 		}
 
 		return null;
+	}
+
+	public static void saveImage(BufferedImage bufferedImage, String filePath, boolean rewrite)
+	{
+		File outputFile = new File(filePath);
+
+		if (outputFile.exists() && !rewrite)
+		{
+			return;
+		}
+
+		try
+		{
+			File parent = outputFile.getParentFile();
+			if (parent != null)
+			{
+				parent.mkdirs();
+			}
+
+			String fileType = getFileType(filePath);
+			ImageIO.write(bufferedImage, fileType, outputFile);
+
+		} catch (IOException e)
+		{
+			e.printStackTrace();
+		}
 	}
 }

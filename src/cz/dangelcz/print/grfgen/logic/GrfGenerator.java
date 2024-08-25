@@ -183,7 +183,6 @@ public class GrfGenerator
 				if (rowEnd)
 				{
 					sb.append("\n");
-					//rowIndex = 0;
 				}
 			}
 		}
