@@ -142,8 +142,7 @@ public class GrfGenerator
 		int rowIndex = 0;
 		boolean rowEnd;
 
-		char auxChar;
-		char auxBinaryChar[] = { '0', '0', '0', '0', '0', '0', '0', '0' };
+		int byteData = 0;
 
 		widthBytes = width / 8;
 
@@ -164,10 +163,8 @@ public class GrfGenerator
 			blue = (rgb) & 0x000000FF;
 
 			colorSum = red + green + blue;
-			auxChar = colorSum > blackLimit ? '0' : '1';
-
-			auxBinaryChar[binaryIndex] = auxChar;
-			
+			// write to the byte from the right -> first shift left and then write 0 / 1 bit
+			byteData = (byteData << 1) | (colorSum > blackLimit ? 0 : 1);
 
 			rowIndex = i % width;
 			binaryIndex++;
@@ -176,8 +173,15 @@ public class GrfGenerator
 			
 			if (binaryIndex == 8 || rowEnd)
 			{
-				sb.append(fourByteBinary(new String(auxBinaryChar)));
-				auxBinaryChar = new char[] { '0', '0', '0', '0', '0', '0', '0', '0' };
+				if (byteData < 16)
+				{
+					sb.append("0");
+				}
+
+				// convert byte to hex string
+				sb.append(Integer.toString(byteData, 16).toUpperCase());
+				
+				byteData = 0;
 				binaryIndex = 0;
 				
 				if (rowEnd)
@@ -188,19 +192,6 @@ public class GrfGenerator
 		}
 
 		return sb.toString();
-	}
-
-	private String fourByteBinary(String binaryStr)
-	{
-		int decimal = Integer.parseInt(binaryStr, 2);
-
-		if (decimal > 15)
-		{
-			return Integer.toString(decimal, 16).toUpperCase();
-		} else
-		{
-			return "0" + Integer.toString(decimal, 16).toUpperCase();
-		}
 	}
 
 	private String encodeHexAscii(String code)
