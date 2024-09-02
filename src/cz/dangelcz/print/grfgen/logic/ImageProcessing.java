@@ -134,7 +134,7 @@ public class ImageProcessing
 		return rotate90or180(inputImage, Math.PI);
 	}
 
-	public static BufferedImage flipHorizontaly(BufferedImage inputImage)
+	public static BufferedImage flipHorizontally(BufferedImage inputImage)
 	{
 		int width = inputImage.getWidth();
 		int height = inputImage.getHeight();
@@ -146,7 +146,7 @@ public class ImageProcessing
 		return b;
 	}
 
-	public static BufferedImage flipVerticaly(BufferedImage inputImage)
+	public static BufferedImage flipVertically(BufferedImage inputImage)
 	{
 		int width = inputImage.getWidth();
 		int height = inputImage.getHeight();
@@ -166,5 +166,6 @@ public class ImageProcessing
 		graphics2D.dispose();
 		return resizedImage;
 	}
+
 
 }

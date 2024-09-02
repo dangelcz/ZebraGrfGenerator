@@ -191,7 +191,7 @@ public class GrfGeneratorWindowLayout
 		sl_controlPanel.putConstraint(SpringLayout.NORTH, turn180Button, 82, SpringLayout.SOUTH, lblRotate);
 
 
-		JButton flipHorizontalyButton = window.flipHorizontalyButton;
+		JButton flipHorizontalyButton = window.flipHorizontallyButton;
 		flipHorizontalyButton.setText("Flip horz.");
 		GridBagConstraints gbc_flipHorizontalyButton = new GridBagConstraints();
 		gbc_flipHorizontalyButton.fill = GridBagConstraints.HORIZONTAL;

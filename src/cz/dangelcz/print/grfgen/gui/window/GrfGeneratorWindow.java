@@ -49,7 +49,7 @@ public class GrfGeneratorWindow
 	JButton turnLeftButton;
 	JButton turnRightButton;
 	JButton turn180Button;
-	JButton flipHorizontalyButton;
+	JButton flipHorizontallyButton;
 	JButton flipVerticallyButton;
 	JButton resetButton;
 
@@ -191,14 +191,14 @@ public class GrfGeneratorWindow
             updateOutputImage();
         });
 
-		flipHorizontalyButton.addActionListener(e -> {
-            BufferedImage rotated = ImageProcessing.flipHorizontaly(windowData.getRotatedImage());
+		flipHorizontallyButton.addActionListener(e -> {
+            BufferedImage rotated = ImageProcessing.flipHorizontally(windowData.getRotatedImage());
             windowData.setRotatedImage(rotated);
             updateOutputImage();
         });
 
 		flipVerticallyButton.addActionListener(e -> {
-            BufferedImage rotated = ImageProcessing.flipVerticaly(windowData.getRotatedImage());
+            BufferedImage rotated = ImageProcessing.flipVertically(windowData.getRotatedImage());
             windowData.setRotatedImage(rotated);
             updateOutputImage();
         });
